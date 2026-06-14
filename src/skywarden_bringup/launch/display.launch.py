@@ -8,8 +8,8 @@ import os
 
 
 def generate_launch_description():
-    urdf_path = os.path.join(get_package_share_directory("aerowarden_description"), "urdf", "aerowarden.xacro.urdf")
-    rviz_config_path = os.path.join(get_package_share_directory("aerowarden_bringup"), "config", "rviz.rviz")
+    urdf_path = os.path.join(get_package_share_directory("skywarden_description"), "urdf", "skywarden.xacro.urdf")
+    rviz_config_path = os.path.join(get_package_share_directory("skywarden_bringup"), "config", "rviz.rviz")
     robot_description = Command([FindExecutable(name="xacro"), " ", urdf_path])
 
     robot_state_publisher_node = Node(

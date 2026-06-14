@@ -8,7 +8,7 @@
       "includePath": [
         "/home/zeyadcode/megajaw_ws/install/megajaw_interfaces/include/**",
         "/opt/ros/jazzy/include/**",
-        "/home/zeyadcode/aerowarden_ws/src/aerowarden_ai/include/**",
+        "/home/zeyadcode/skywarden_ws/src/skywarden_ai/include/**",
         "/usr/include/**"
       ],
       "name": "ros2",
