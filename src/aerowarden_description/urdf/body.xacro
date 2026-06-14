@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- SPECS -->
+    <xacro:property name="base_lx" value="0.3" />
+    <xacro:property name="base_ly" value="0.3" />
+    <xacro:property name="base_lz" value="0.05" />
+
+    <xacro:property name="yaw_lx" value="0.2" />
+    <xacro:property name="yaw_ly" value="0.2" />
+    <xacro:property name="yaw_lz" value="0.05" />
+
+    <xacro:property name="stand_lx" value="0.05" />
+    <xacro:property name="stand_ly" value="0.02" />
+    <xacro:property name="stand_lz" value="0.15" />
+
+    <xacro:property name="pitch_lx" value="0.05" />
+    <xacro:property name="pitch_ly" value="0.1" />
+    <xacro:property name="pitch_lz" value="0.02" />
+    <!-- END_SPECS -->
+
+
+    <link name="footprint" />
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${base_lx} ${base_ly} ${base_lz}" />
+            </geometry>
+            <material name="red" />
+        </visual>
+    </link>
+
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0 0 ${base_lz / 2}" rpy="0 0 0" />
+        <parent link="footprint" />
+        <child link="base_link" />
+    </joint>
+
+    <link name="yaw_link">
+        <visual>
+            <origin xyz="0 0 ${yaw_lz / 2}" rpy="0 0 0" />
+            <geometry>
+                <box size="${yaw_lx} ${yaw_ly} ${yaw_lz}" />
+            </geometry>
+            <material name="green" />
+        </visual>
+    </link>
+
+    <joint name="yaw_base_joint" type="revolute">
+        <origin xyz="0 0 ${base_lz / 2}" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="yaw_link" />
+        <axis xyz="0 0 1" />
+        <limit lower="${-pi/2}" upper="${pi/2}" effort="30" velocity="${pi}" /> <!-- Nema 17 motor
+        have holding toruqe of 0.3 N*m-->
+    </joint>
+
+    <!-- Stand -->
+    <link name="lstand_link">
+        <visual>
+            <origin xyz="0 0 ${stand_lz / 2}" rpy="0 0 0" />
+            <geometry>
+                <box size="${stand_lx} ${stand_ly} ${stand_lz}" />
+            </geometry>
+            <material name="black" />
+        </visual>
+    </link>
+
+    <joint name="lstand_yaw_joint" type="fixed">
+        <origin xyz="0 ${(pitch_ly + stand_ly) / 2} ${yaw_lz}" rpy="0 0 0" />
+        <parent link="yaw_link" />
+        <child link="lstand_link" />
+    </joint>
+
+    <link name="rstand_link">
+        <visual>
+            <origin xyz="0 0 ${stand_lz / 2}" rpy="0 0 0" />
+            <geometry>
+                <box size="${stand_lx} ${stand_ly} ${stand_lz}" />
+            </geometry>
+            <material name="black" />
+        </visual>
+    </link>
+
+    <joint name="rstand_yaw_joint" type="fixed">
+        <origin xyz="0 -${(pitch_ly + stand_ly) / 2} ${yaw_lz}" rpy="0 0 0" />
+        <parent link="yaw_link" />
+        <child link="rstand_link" />
+    </joint>
+
+    <link name="pitch_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${pitch_lx} ${pitch_ly} ${pitch_lz}" />
+            </geometry>
+            <material name="blue" />
+        </visual>
+    </link>
+
+    <joint name="pitch_base_joint" type="revolute">
+        <origin xyz="0 -${pitch_ly / 2 + stand_ly / 2} ${pitch_lz / 2 + stand_lz * 0.8}" rpy="0 0 0" />
+        <parent link="lstand_link" />
+        <child link="pitch_link" />
+        <axis xyz="0 1 0" />
+        <limit lower="${-pi/2}" upper="${pi/2}" effort="30" velocity="${pi}" /> <!-- Nema 17 motor
+        have holding toruqe of 0.3 N*m-->
+    </joint>
+
+</robot>

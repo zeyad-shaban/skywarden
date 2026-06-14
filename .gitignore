@@ -1,0 +1,83 @@
+# =========================
+# ROS 2 / colcon
+# =========================
+build/
+install/
+log/
+logs/
+
+# =========================
+# CMake / C++
+# =========================
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+compile_commands.json
+*.o
+*.obj
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.lib
+*.pdb
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# =========================
+# ROS / RViz / local runtime files
+# =========================
+*.bag
+*.db3
+*.pcd
+*.ply
+*.log
+*.launch.py.bak
+
+# =========================
+# VS Code
+# Keep shared project config only if you want it committed.
+# Comment these out if you want to keep workspace settings in git.
+# =========================
+**/.vscode/*
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+!**/.vscode/extensions.json
+!**/.vscode/c_cpp_properties.json
+
+# =========================
+# OS junk
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Misc
+# =========================
+*.swp
+*.swo
+*~
