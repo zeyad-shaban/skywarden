@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler
+from launch.actions import AppendEnvironmentVariable, DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -15,13 +15,9 @@ def generate_launch_description():
     rviz = LaunchConfiguration("rviz", default="false")
 
     world = LaunchConfiguration("world", default=PathJoinSubstitution([FindPackageShare("skywarden_bringup"), "worlds", "my_world.sdf"]))
-
     robot_name = "skywarden"
-
     xacro_file = PathJoinSubstitution([FindPackageShare("skywarden_description"), "urdf", "skywarden.urdf.xacro"])
-
     controllers_file = PathJoinSubstitution([FindPackageShare("skywarden_bringup"), "config", "skywarden_controller.yaml"])
-
     robot_description_content = Command([FindExecutable(name="xacro"), " ", xacro_file])
 
     node_robot_state_publisher = Node(
@@ -69,6 +65,7 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
+            '/parrot_bebop/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
         ],
     )
 
@@ -100,6 +97,26 @@ def generate_launch_description():
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
+    # Spawn Drone
+    models_path = PathJoinSubstitution([FindPackageShare("threat_drone_sim"), "models"])
+    drone_sdf_path = PathJoinSubstitution([models_path, "parrot_bebop", "model.sdf"])
+
+    # fmt: off
+    gz_spawn_drone_node = Node(
+            package='ros_gz_sim',
+            executable='create',
+            arguments=[
+                '-name', 'parrot_bebop',  # Must match the entity name used in your python script
+                '-file', drone_sdf_path,
+                '-x', '15.0',
+                '-y', '0.0',
+                '-z', '5.0',
+            ],
+            output='screen'
+        )
+        
+    # fmt: on
+
     return LaunchDescription(
         [
             DeclareLaunchArgument(
@@ -130,10 +147,12 @@ def generate_launch_description():
             DeclareLaunchArgument("roll", default_value="0.0"),
             DeclareLaunchArgument("pitch", default_value="0.0"),
             DeclareLaunchArgument("yaw", default_value="0.0"),
+            AppendEnvironmentVariable("GZ_SIM_RESOURCE_PATH", models_path),
             gz_sim,
             bridge_clock,
             node_robot_state_publisher,
             gz_spawn_entity,
+            gz_spawn_drone_node,
             rviz_node,
             RegisterEventHandler(
                 OnProcessExit(
