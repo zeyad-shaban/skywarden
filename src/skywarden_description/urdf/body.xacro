@@ -16,10 +16,19 @@
     <xacro:property name="stand_lz" value="0.15" />
     <xacro:property name="stand_mass" value="0.1" />
 
-    <xacro:property name="pitch_lx" value="0.05" />
-    <xacro:property name="pitch_ly" value="0.1" />
-    <xacro:property name="pitch_lz" value="0.02" />
+    <xacro:property name="pitch_lx" value="0.02" />
+    <xacro:property name="pitch_ly" value="0.15" />
+    <xacro:property name="pitch_lz" value="0.13" />
     <xacro:property name="pitch_mass" value="0.1" />
+
+    <xacro:property name="shooter_lx" value="0.07" />
+    <xacro:property name="shooter_ly" value="0.05" />
+    <xacro:property name="shooter_lz" value="0.05" />
+    <xacro:property name="shooter_mass" value="0.02" />
+
+    <xacro:property name="camera_lx" value="0.02" />
+    <xacro:property name="camera_ly" value="0.04" />
+    <xacro:property name="camera_lz" value="0.04" />
     <!-- END_SPECS -->
 
 
@@ -143,7 +152,7 @@
     <link name="pitch_link">
 
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 0.02" rpy="0 0 0" />
             <geometry>
                 <box size="${pitch_lx} ${pitch_ly} ${pitch_lz}" />
             </geometry>
@@ -170,4 +179,41 @@
         have holding toruqe of 0.3 N*m-->
     </joint>
 
+    <link name="shooter_link">
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${shooter_lx} ${shooter_ly} ${shooter_lz}" />
+            </geometry>
+            <material name="white" />
+        </visual>
+
+    </link>
+    
+    <joint name="shooter_pitch_joint" type="fixed">
+        <origin xyz="${(pitch_lx + shooter_lx) / 2} 0 0" rpy="0 0 0"/>
+        <parent link="pitch_link"/>
+        <child link="shooter_link"/>
+    </joint>
+
+    <!-- Camera -->
+    <link name="camera_link">
+        
+        <visual>
+            <origin xyz="0.0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_lx} ${camera_ly} ${camera_lz}"/>
+            </geometry>
+            <material name="black" />
+        </visual>
+
+    </link>
+
+    <joint name="camera_pitch_link" type="fixed">
+        <origin xyz="${(pitch_lx + camera_lx) / 2} 0 ${pitch_lz - camera_lz * 1.7}" rpy="0 0 0" />
+        <parent link="pitch_link" />
+        <child link="camera_link" />
+    </joint>
+    
 </robot>
