@@ -8,7 +8,7 @@ import os
 
 
 def generate_launch_description():
-    urdf_path = os.path.join(get_package_share_directory("skywarden_description"), "urdf", "skywarden.xacro.urdf")
+    urdf_path = os.path.join(get_package_share_directory("skywarden_description"), "urdf", "skywarden.urdf.xacro")
     rviz_config_path = os.path.join(get_package_share_directory("skywarden_bringup"), "config", "rviz.rviz")
     robot_description = Command([FindExecutable(name="xacro"), " ", urdf_path])
 
@@ -26,8 +26,6 @@ def generate_launch_description():
         condition=None if True else None,
     )
 
-    print("====")
-    print(rviz_config_path)
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",

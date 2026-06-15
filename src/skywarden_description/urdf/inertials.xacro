@@ -1,0 +1,11 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+    <xacro:macro name="box_inertial" params="m lx ly lz o_xyz o_rpy">
+        <inertial>
+            <origin xyz="${o_xyz}" rpy="${o_rpy}"/>
+            <mass value="${m}"/>
+            <inertia ixx="${m/12 * (ly**2 + lz**2)}" ixy="0.0" ixz="0.0" iyy="${m/12 * (lx**2 + lz**2)}" iyz="0.0" izz="${m/12 * (ly**2 + lx**2)}"/>
+        </inertial>
+    </xacro:macro>
+    
+</robot>

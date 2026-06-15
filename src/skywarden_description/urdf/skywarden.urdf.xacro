@@ -1,5 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="skywarden">
+    
     <xacro:include filename="./materials.xacro" />
+    <xacro:include filename="./inertials.xacro" />
     <xacro:include filename="./body.xacro" />
+    
+    <xacro:include filename="./gz_plugins.xacro" />
+    <xacro:include filename="./gz.ros2control.xacro" />
 </robot>

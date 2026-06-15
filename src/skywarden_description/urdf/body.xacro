@@ -4,24 +4,29 @@
     <xacro:property name="base_lx" value="0.3" />
     <xacro:property name="base_ly" value="0.3" />
     <xacro:property name="base_lz" value="0.05" />
+    <xacro:property name="base_mass" value="0.8" />
 
     <xacro:property name="yaw_lx" value="0.2" />
     <xacro:property name="yaw_ly" value="0.2" />
     <xacro:property name="yaw_lz" value="0.05" />
+    <xacro:property name="yaw_mass" value="0.2" />
 
     <xacro:property name="stand_lx" value="0.05" />
     <xacro:property name="stand_ly" value="0.02" />
     <xacro:property name="stand_lz" value="0.15" />
+    <xacro:property name="stand_mass" value="0.1" />
 
     <xacro:property name="pitch_lx" value="0.05" />
     <xacro:property name="pitch_ly" value="0.1" />
     <xacro:property name="pitch_lz" value="0.02" />
+    <xacro:property name="pitch_mass" value="0.1" />
     <!-- END_SPECS -->
 
 
     <link name="footprint" />
 
     <link name="base_link">
+
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
@@ -29,6 +34,17 @@
             </geometry>
             <material name="red" />
         </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${base_lx} ${base_ly} ${base_lz}" />
+            </geometry>
+        </collision>
+
+        <xacro:box_inertial m="${base_mass}" lx="${base_lx}" ly="${base_ly}" lz="${base_lz}"
+            o_xyz="0 0 0" o_rpy="0 0 0" />
+
     </link>
 
     <joint name="base_footprint_joint" type="fixed">
@@ -38,6 +54,7 @@
     </joint>
 
     <link name="yaw_link">
+
         <visual>
             <origin xyz="0 0 ${yaw_lz / 2}" rpy="0 0 0" />
             <geometry>
@@ -45,6 +62,17 @@
             </geometry>
             <material name="green" />
         </visual>
+
+        <collision>
+            <origin xyz="0 0 ${yaw_lz / 2}" rpy="0 0 0" />
+            <geometry>
+                <box size="${yaw_lx} ${yaw_ly} ${yaw_lz}" />
+            </geometry>
+        </collision>
+
+        <xacro:box_inertial m="${yaw_mass}" lx="${yaw_lx}" ly="${yaw_ly}" lz="${yaw_lz}"
+            o_xyz="0 0 ${yaw_lz / 2}" o_rpy="0 0 0" />
+
     </link>
 
     <joint name="yaw_base_joint" type="revolute">
@@ -58,6 +86,7 @@
 
     <!-- Stand -->
     <link name="lstand_link">
+
         <visual>
             <origin xyz="0 0 ${stand_lz / 2}" rpy="0 0 0" />
             <geometry>
@@ -65,6 +94,17 @@
             </geometry>
             <material name="black" />
         </visual>
+
+        <collision>
+            <origin xyz="0 0 ${stand_lz / 2}" rpy="0 0 0" />
+            <geometry>
+                <box size="${stand_lx} ${stand_ly} ${stand_lz}" />
+            </geometry>
+        </collision>
+
+        <xacro:box_inertial m="${stand_mass}" lx="${stand_lx}" ly="${stand_ly}" lz="${stand_lz}"
+            o_xyz="0 0 ${stand_lz / 2}" o_rpy="0 0 0" />
+
     </link>
 
     <joint name="lstand_yaw_joint" type="fixed">
@@ -74,6 +114,7 @@
     </joint>
 
     <link name="rstand_link">
+
         <visual>
             <origin xyz="0 0 ${stand_lz / 2}" rpy="0 0 0" />
             <geometry>
@@ -81,6 +122,16 @@
             </geometry>
             <material name="black" />
         </visual>
+
+        <collision>
+            <origin xyz="0 0 ${stand_lz / 2}" rpy="0 0 0" />
+            <geometry>
+                <box size="${stand_lx} ${stand_ly} ${stand_lz}" />
+            </geometry>
+        </collision>
+
+        <xacro:box_inertial m="${stand_mass}" lx="${stand_lx}" ly="${stand_ly}" lz="${stand_lz}"
+            o_xyz="0 0 ${stand_lz / 2}" o_rpy="0 0 0" />
     </link>
 
     <joint name="rstand_yaw_joint" type="fixed">
@@ -90,6 +141,7 @@
     </joint>
 
     <link name="pitch_link">
+
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
@@ -97,6 +149,16 @@
             </geometry>
             <material name="blue" />
         </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${pitch_lx} ${pitch_ly} ${pitch_lz}" />
+            </geometry>
+        </collision>
+
+        <xacro:box_inertial m="${pitch_mass}" lx="${pitch_lx}" ly="${pitch_ly}" lz="${pitch_lz}"
+            o_xyz="0 0 0" o_rpy="0 0 0" />
     </link>
 
     <joint name="pitch_base_joint" type="revolute">
