@@ -13,6 +13,7 @@ def generate_launch_description():
     # Launch arguments
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
     rviz = LaunchConfiguration("rviz", default="false")
+    rviz_config_path = PathJoinSubstitution([FindPackageShare("skywarden_bringup"), "config", "rviz.rviz"])
 
     world = LaunchConfiguration("world", default=PathJoinSubstitution([FindPackageShare("skywarden_bringup"), "worlds", "my_world.sdf"]))
     robot_name = "skywarden"
@@ -65,7 +66,9 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
-            '/parrot_bebop/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
+            "/parrot_bebop/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
+            "/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
+            "/camera/image@sensor_msgs/msg/Image[gz.msgs.Image"
         ],
     )
 
@@ -95,6 +98,7 @@ def generate_launch_description():
         output="screen",
         condition=IfCondition(rviz),
         parameters=[{"use_sim_time": use_sim_time}],
+        arguments=['-d', rviz_config_path]
     )
 
     # Spawn Drone
@@ -108,13 +112,16 @@ def generate_launch_description():
             arguments=[
                 '-name', 'parrot_bebop',  # Must match the entity name used in your python script
                 '-file', drone_sdf_path,
-                '-x', '15.0',
-                '-y', '0.0',
-                '-z', '5.0',
+                '-x', '4.18',
+                '-y', '-0.01',
+                '-z', '1.64',
+                '-R', '-0.01',
+                '-P', '0.46',
+                '-Y', '-3.06',
             ],
             output='screen'
         )
-        
+
     # fmt: on
 
     return LaunchDescription(

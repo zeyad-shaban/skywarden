@@ -6,7 +6,7 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "/home/zeyadcode/megajaw_ws/install/megajaw_interfaces/include/**",
+        "/home/zeyadcode/skywarden_ws/install/skywarden_interfaces/include/**",
         "/opt/ros/jazzy/include/**",
         "/usr/include/**"
       ],

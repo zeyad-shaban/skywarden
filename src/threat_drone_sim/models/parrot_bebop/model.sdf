@@ -59,6 +59,7 @@
       </surface>
     </collision>
     <visual name="hull">
+      <cast_shadows>false</cast_shadows>
       <geometry>
         <mesh>
           <uri>model://parrot_bebop/meshes/hull.dae</uri>
@@ -66,6 +67,7 @@
       </geometry>
     </visual>
     <visual name="propeller_rr">
+      <cast_shadows>false</cast_shadows>
       <pose>-0.09035 -0.11423 -0.00501 0 0 0</pose>
       <geometry>
         <mesh>
@@ -74,6 +76,7 @@
       </geometry>
     </visual>
     <visual name="propeller_rl">
+      <cast_shadows>false</cast_shadows>
       <pose>-0.09035 0.11452 -0.00501 0 0 0</pose>
       <geometry>
         <mesh>
@@ -82,6 +85,7 @@
       </geometry>
     </visual>
     <visual name="propeller_fr">
+      <cast_shadows>false</cast_shadows>
       <pose>0.08456 -0.11435 -0.00501 0 0 0</pose>
       <geometry>
         <mesh>
@@ -90,6 +94,7 @@
       </geometry>
     </visual>
     <visual name="propeller_fl">
+      <cast_shadows>false</cast_shadows>
       <pose>0.08456 0.11463 -0.00501 0 0 0</pose>
       <geometry>
         <mesh>
