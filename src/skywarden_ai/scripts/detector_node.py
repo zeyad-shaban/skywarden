@@ -5,6 +5,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 import cv2
 from ament_index_python.packages import get_package_share_directory
+from skywarden_interfaces.msg import TargetState
 import os
 import time
 
@@ -30,10 +31,12 @@ class DetectorNode(Node):
         self.model = YOLO(model_path)
 
         self.img_sub_ = self.create_subscription(Image, "/camera/image", self.image_callback, 10)
+        self.target_state_pub = self.create_publisher(TargetState, "/target_state", 10)
         self.last_result_time = time.monotonic()
         
         self.id_lock: int = -1
 
+    # todo turn to proper FSM
     def image_callback(self, msg: Image):
         frame = imgmsg_to_cv2(msg)
         result = self.model.track(frame,
@@ -46,8 +49,10 @@ class DetectorNode(Node):
         self.last_result_time = time.monotonic()
         
         target_cx = target_cy = None
+        target_state_msg = TargetState()
         
         if result.boxes is None or len(result.boxes) == 0:
+            target_state_msg.is_target_visible = False
             self.id_lock = -1
         
         else:
@@ -62,11 +67,24 @@ class DetectorNode(Node):
                 target_box = result.boxes[result.boxes.id == self.id_lock]
             
             if target_box:
-                target_cx = int((target_box.xyxy[0][0] + target_box.xyxy[0][2]) // 2)
-                target_cy = int((target_box.xyxy[0][1] + target_box.xyxy[0][3]) // 2)
-            else:
-                self.id_lock = -1
+                x1, y1, x2, y2 = map(int, target_box.xyxy.squeeze())
+                target_cx = (x1 + x2) // 2
+                target_cy = (y1 + y2) // 2
+
+                target_state_msg.is_target_visible = True
                 
+                frame_height, frame_width = frame.shape[0], frame.shape[1]
+                cy, cx = frame_height / 2, frame_width / 2
+                
+                target_state_msg.norm_dx = (cx - target_cx) / frame_width
+                target_state_msg.norm_dy = (cy - target_cy) / frame_height
+                target_state_msg.depth_meters = -1.0
+                
+            else:
+                target_state_msg.is_target_visible = False
+                self.id_lock = -1
+        
+        self.target_state_pub.publish(target_state_msg)
 
         if self.debug:
             annotated_img = result.plot()
@@ -93,8 +111,9 @@ class DetectorNode(Node):
                 continue
             
             did_find_track = True
-            box_cx = (box.xyxy[0][0] + box.xyxy[0][2]) / 2
-            box_cy = (box.xyxy[0][1] + box.xyxy[0][3]) / 2
+            x1, y1, x2, y2 = map(int, box.xyxy.squeeze())
+            box_cx = (x1 + x2) / 2
+            box_cy = (y1 + y2) / 2
             
             dist = ((box_cx - cx)**2 + (box_cy - cy)**2)**0.5
             if dist < min_dist:

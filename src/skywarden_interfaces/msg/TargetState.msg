@@ -1,0 +1,4 @@
+bool is_target_visible
+float32 norm_dx
+float32 norm_dy
+float32 depth_meters
