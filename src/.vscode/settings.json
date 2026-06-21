@@ -1,31 +1,9 @@
 {
     "ROS2.distro": "jazzy",
     "python.autoComplete.extraPaths": [
-        "/home/zeyadcode/megajaw_ws/build/megajaw_uart_bridge",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_uart_bridge/lib/python3.12/site-packages",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_interfaces/lib/python3.12/site-packages",
-        "/home/zeyadcode/megajaw_ws/build/megajaw_dummy",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_dummy/lib/python3.12/site-packages",
-        "/home/zeyadcode/megajaw_ws/build/megajaw_brain",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_brain/lib/python3.12/site-packages",
-        "/home/zeyadcode/litho_ai/scara_ws/build/scara_brain",
-        "/home/zeyadcode/litho_ai/scara_ws/install/scara_brain/lib/python3.12/site-packages",
-        "/home/zeyadcode/litho_ai/litho_ws/build/litho_brain",
-        "/home/zeyadcode/litho_ai/litho_ws/install/litho_brain/lib/python3.12/site-packages",
         "/opt/ros/jazzy/lib/python3.12/site-packages"
     ],
     "python.analysis.extraPaths": [
-        "/home/zeyadcode/megajaw_ws/build/megajaw_uart_bridge",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_uart_bridge/lib/python3.12/site-packages",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_interfaces/lib/python3.12/site-packages",
-        "/home/zeyadcode/megajaw_ws/build/megajaw_dummy",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_dummy/lib/python3.12/site-packages",
-        "/home/zeyadcode/megajaw_ws/build/megajaw_brain",
-        "/home/zeyadcode/megajaw_ws/install/megajaw_brain/lib/python3.12/site-packages",
-        "/home/zeyadcode/litho_ai/scara_ws/build/scara_brain",
-        "/home/zeyadcode/litho_ai/scara_ws/install/scara_brain/lib/python3.12/site-packages",
-        "/home/zeyadcode/litho_ai/litho_ws/build/litho_brain",
-        "/home/zeyadcode/litho_ai/litho_ws/install/litho_brain/lib/python3.12/site-packages",
         "/opt/ros/jazzy/lib/python3.12/site-packages"
     ],
     "cmake.ignoreCMakeListsMissing": true
