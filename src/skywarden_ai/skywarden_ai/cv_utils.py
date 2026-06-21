@@ -204,3 +204,7 @@ def draw_sniper_scope_better(
     cv2.circle(out, center, 6, (0, 0, 0), 1, lineType=cv2.LINE_AA)
 
     return out
+
+
+def draw_target_crosshair(img, target_cx: int, target_cy: int):
+    cv2.circle(img, (target_cx, target_cy), 1, (0, 0, 255), 2)
