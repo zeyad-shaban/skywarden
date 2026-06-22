@@ -76,8 +76,8 @@ class DetectorNode(Node):
                 frame_height, frame_width = frame.shape[0], frame.shape[1]
                 cy, cx = frame_height / 2, frame_width / 2
                 
-                target_state_msg.norm_dx = (target_cx - cx) / frame_width
-                target_state_msg.norm_dy = (target_cy - cy) / frame_height
+                target_state_msg.norm_err_x = (target_cx - cx) / frame_width
+                target_state_msg.norm_err_y = (target_cy - cy) / frame_height
                 target_state_msg.depth_meters = -1.0
                 
             else:
