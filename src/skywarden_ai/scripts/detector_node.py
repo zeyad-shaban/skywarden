@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-from skywarden_ai.cv_utils import compressed_imgmsg_to_cv2, draw_sniper_scope, draw_sniper_scope_better, draw_target_crosshair
+from skywarden_ai.cv_utils import compressed_imgmsg_to_cv2
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import CompressedImage
-import cv2
+from std_msgs.msg import Float32
 from ament_index_python.packages import get_package_share_directory
 from skywarden_interfaces.msg import TargetState
 import os
 import time
+import cv2
 
 import matplotlib
 
-matplotlib.use("Agg")  # Forces Matplotlib to render headlessly, disabling Qt
+matplotlib.use("Agg")
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
@@ -20,9 +21,6 @@ class DetectorNode(Node):
     def __init__(self):
         super().__init__("detector_node")
         self.get_logger().info(f"detector_node Started")
-
-        self.declare_parameter("debug", True)
-        self.debug: bool = self.get_parameter("debug").value  # type: ignore
 
         static_path = os.path.join(get_package_share_directory("skywarden_ai"), "static")
         self.tracker_config_path = os.path.join(static_path, "config", "botsort_config.yaml")
@@ -33,8 +31,7 @@ class DetectorNode(Node):
         self.img_sub_ = self.create_subscription(CompressedImage, "/camera/image/compressed", self.image_callback, 10)
         self.target_state_pub = self.create_publisher(TargetState, "/target_state", 10)
         
-        self.avg_fps = 3
-        self.last_result_time = time.monotonic()
+        self.annotated_img_pub_ = self.create_publisher(CompressedImage, "/camera/annotated/compressed", 10)
         
         self.id_lock: int = -1
 
@@ -50,10 +47,6 @@ class DetectorNode(Node):
             tracker=self.tracker_config_path,
             verbose=False
         )[0]
-        
-        fps = 1 / (time.monotonic() - self.last_result_time)
-        self.avg_fps = self.avg_fps * 0.9 + (1 - 0.9) * fps 
-        self.last_result_time = time.monotonic()
         
         target_cx = target_cy = None
         target_state_msg = TargetState()
@@ -92,18 +85,14 @@ class DetectorNode(Node):
                 self.id_lock = -1
         
         self.target_state_pub.publish(target_state_msg)
+        
+        annotated_img = result.plot()
+        annotated_msg = CompressedImage()
+        annotated_msg.header = msg.header
+        annotated_msg.format = "jpeg"
+        annotated_msg.data = cv2.imencode('.jpg', annotated_img)[1].tobytes()
+        self.annotated_img_pub_.publish(annotated_msg)
 
-        if self.debug:
-            annotated_img = result.plot()
-
-            if target_cx is not None and target_cy is not None:
-                draw_target_crosshair(annotated_img, target_cx, target_cy)
-            
-            # annotated_img = draw_sniper_scope_better(annotated_img)
-            cv2.putText(annotated_img, str(int(self.avg_fps)), (7, 29), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(0, 255, 0), thickness=2)
-            
-            cv2.imshow("frame", annotated_img)
-            cv2.waitKey(1)
             
     def decide_lock(self, result: Results, img_height: int, img_width: int):
         if result.boxes is None:
@@ -129,7 +118,6 @@ class DetectorNode(Node):
                 
         return did_find_track
                 
-                
     def pick_largest_box(self, result: Results):
         if result.boxes is None:
             return
@@ -138,7 +126,8 @@ class DetectorNode(Node):
         largest_box = None
         
         for box in result.boxes:
-            width, height = box.xywh[0][2], box.xywh[0][3]
+            xywh = box.xywh[0].tolist() 
+            width, height = xywh[2], xywh[3]
             area = width * height
             
             if area > largest_area:

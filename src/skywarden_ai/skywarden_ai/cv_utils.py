@@ -6,7 +6,7 @@ import time
 from sensor_msgs.msg import CompressedImage, Image
 
 
-def compressed_imgmsg_to_cv2(msg: CompressedImage) -> cv2.Mat | None:
+def compressed_imgmsg_to_cv2(msg: CompressedImage):
     np_arr = np.frombuffer(msg.data, np.uint8)
     return cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
     
