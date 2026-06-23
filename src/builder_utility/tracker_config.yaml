@@ -1,0 +1,14 @@
+tracker_type: botsort
+track_high_thresh: 0.5
+track_low_thresh: 0.1
+new_track_thresh: 0.7
+track_buffer: 30
+match_thresh: 0.8
+gmc_method: sparseOptFlow
+
+# required
+with_reid: False
+appearance_thresh: 0.3 # ignored as ReID off
+model: auto # ReID model, ignored as ReID off
+proximity_thresh: 0.7 # ignored as ReID off
+fuse_score: True

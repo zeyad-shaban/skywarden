@@ -35,7 +35,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(PathJoinSubstitution([FindPackageShare("ros_gz_sim"), "launch", "gz_sim.launch.py"])),
         launch_arguments={
             "gz_args": [
-                "-r -v 1 ",
+                "-s -r -v 1 ",
                 world,
             ]
         }.items(),
@@ -123,6 +123,17 @@ def generate_launch_description():
         )
 
     # fmt: on
+    
+    controller_node = Node(
+        package="skywarden_controller",
+        executable="controller_node",
+        output="screen",
+        parameters=[{
+            "Kyaw": 1.0,
+            "Kpitch": 1.0,
+        }],
+        arguments=['-d', rviz_config_path]
+    )
 
     return LaunchDescription(
         [
@@ -161,6 +172,7 @@ def generate_launch_description():
             gz_spawn_entity,
             gz_spawn_drone_node,
             rviz_node,
+            controller_node,
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=gz_spawn_entity,

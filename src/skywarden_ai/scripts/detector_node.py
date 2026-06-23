@@ -32,6 +32,8 @@ class DetectorNode(Node):
 
         self.img_sub_ = self.create_subscription(Image, "/camera/image", self.image_callback, 10)
         self.target_state_pub = self.create_publisher(TargetState, "/target_state", 10)
+        
+        self.avg_fps = 3
         self.last_result_time = time.monotonic()
         
         self.id_lock: int = -1
@@ -46,6 +48,7 @@ class DetectorNode(Node):
         )[0]
         
         fps = 1 / (time.monotonic() - self.last_result_time)
+        self.avg_fps = self.avg_fps * 0.9 + (1 - 0.9) * fps 
         self.last_result_time = time.monotonic()
         
         target_cx = target_cy = None
@@ -93,7 +96,7 @@ class DetectorNode(Node):
                 draw_target_crosshair(annotated_img, target_cx, target_cy)
             
             annotated_img = draw_sniper_scope_better(annotated_img)
-            cv2.putText(annotated_img, str(int(fps)), (7, 29), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(0, 255, 0), thickness=2)
+            cv2.putText(annotated_img, str(int(self.avg_fps)), (7, 29), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(0, 255, 0), thickness=2)
             
             cv2.imshow("frame", annotated_img)
             cv2.waitKey(1)
