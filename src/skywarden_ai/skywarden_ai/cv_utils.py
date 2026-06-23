@@ -3,8 +3,14 @@ import cv2
 import math
 import time
 
+from sensor_msgs.msg import CompressedImage, Image
 
-def imgmsg_to_cv2(msg):
+
+def compressed_imgmsg_to_cv2(msg: CompressedImage) -> cv2.Mat | None:
+    np_arr = np.frombuffer(msg.data, np.uint8)
+    return cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+    
+def imgmsg_to_cv2(msg: Image):
     if msg.encoding == "bgr8":
         return np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, 3)
     elif msg.encoding == "rgb8":  # it's this

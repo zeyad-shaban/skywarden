@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-from skywarden_ai.cv_utils import imgmsg_to_cv2, draw_sniper_scope, draw_sniper_scope_better, draw_target_crosshair
+from skywarden_ai.cv_utils import compressed_imgmsg_to_cv2, draw_sniper_scope, draw_sniper_scope_better, draw_target_crosshair
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage
 import cv2
 from ament_index_python.packages import get_package_share_directory
 from skywarden_interfaces.msg import TargetState
@@ -30,7 +30,7 @@ class DetectorNode(Node):
         model_path = os.path.join(static_path, "models", "yolo26n_640_int8_openvino_model")
         self.model = YOLO(model_path)
 
-        self.img_sub_ = self.create_subscription(Image, "/camera/image", self.image_callback, 10)
+        self.img_sub_ = self.create_subscription(CompressedImage, "/camera/image/compressed", self.image_callback, 10)
         self.target_state_pub = self.create_publisher(TargetState, "/target_state", 10)
         
         self.avg_fps = 3
@@ -39,8 +39,12 @@ class DetectorNode(Node):
         self.id_lock: int = -1
 
     # todo turn to proper FSM
-    def image_callback(self, msg: Image):
-        frame = imgmsg_to_cv2(msg)
+    def image_callback(self, msg: CompressedImage):
+        frame = compressed_imgmsg_to_cv2(msg)
+        if frame is None:
+            self.get_logger().warning("couldn't extract frame from msg")
+            return
+            
         result = self.model.track(frame,
             persist=True,
             tracker=self.tracker_config_path,
@@ -95,7 +99,7 @@ class DetectorNode(Node):
             if target_cx is not None and target_cy is not None:
                 draw_target_crosshair(annotated_img, target_cx, target_cy)
             
-            annotated_img = draw_sniper_scope_better(annotated_img)
+            # annotated_img = draw_sniper_scope_better(annotated_img)
             cv2.putText(annotated_img, str(int(self.avg_fps)), (7, 29), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(0, 255, 0), thickness=2)
             
             cv2.imshow("frame", annotated_img)
@@ -118,7 +122,7 @@ class DetectorNode(Node):
             box_cx = (x1 + x2) / 2
             box_cy = (y1 + y2) / 2
             
-            dist = ((box_cx - cx)**2 + (box_cy - cy)**2)**0.5
+            dist = ((box_cx - cx)**2 + (box_cy - cy)**2)
             if dist < min_dist:
                 min_dist = dist
                 self.id_lock = int(box.id.item())

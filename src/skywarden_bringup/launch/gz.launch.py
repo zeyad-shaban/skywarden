@@ -68,9 +68,17 @@ def generate_launch_description():
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
             "/parrot_bebop/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
             "/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
-            "/camera/image@sensor_msgs/msg/Image[gz.msgs.Image"
         ],
     )
+    
+    ros_gz_image_node = Node(
+            package="ros_gz_image",
+            executable="image_bridge",
+            arguments=["/camera/image"],
+            parameters=[{
+                "camera.image.compressed.jpeg_quality": 75,
+            }],
+        )
 
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
@@ -168,6 +176,7 @@ def generate_launch_description():
             AppendEnvironmentVariable("GZ_SIM_RESOURCE_PATH", models_path),
             gz_sim,
             bridge_clock,
+            ros_gz_image_node,
             node_robot_state_publisher,
             gz_spawn_entity,
             gz_spawn_drone_node,
