@@ -12,8 +12,8 @@ class DroneMoverNode(Node):
 
         self.forward_speed = 0.5
         self.hz = 30
-        
-        self.publisher_ = self.create_publisher(Twist, "/parrot_bebop/cmd_vel", 10)
+
+        self.publisher_ = self.create_publisher(Twist, "/drone/cmd_vel", 10)
         self.timer_ = self.create_timer(1 / self.hz, self.update_position)
         self.time_elapsed = 0
 

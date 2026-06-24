@@ -14,6 +14,7 @@ ament_python_install_package(${PROJECT_NAME})
 install(DIRECTORY static DESTINATION share/${PROJECT_NAME})
 
 install(PROGRAMS scripts/detector_node.py scripts/visualizer_node.py
+                 scripts/visualize_ballistic_arc.py
         DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

@@ -21,10 +21,10 @@
     <xacro:property name="pitch_lz" value="0.13" />
     <xacro:property name="pitch_mass" value="0.1" />
 
-    <xacro:property name="shooter_lx" value="0.07" />
-    <xacro:property name="shooter_ly" value="0.05" />
-    <xacro:property name="shooter_lz" value="0.05" />
-    <xacro:property name="shooter_mass" value="0.02" />
+    <xacro:property name="muzzle_lx" value="0.07" />
+    <xacro:property name="muzzle_ly" value="0.05" />
+    <xacro:property name="muzzle_lz" value="0.05" />
+    <xacro:property name="muzzle_mass" value="0.02" />
 
     <xacro:property name="camera_lx" value="0.02" />
     <xacro:property name="camera_ly" value="0.04" />
@@ -179,22 +179,22 @@
         have holding toruqe of 0.3 N*m-->
     </joint>
 
-    <link name="shooter_link">
+    <link name="muzzle_link">
 
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <box size="${shooter_lx} ${shooter_ly} ${shooter_lz}" />
+                <box size="${muzzle_lx} ${muzzle_ly} ${muzzle_lz}" />
             </geometry>
             <material name="white" />
         </visual>
 
     </link>
     
-    <joint name="shooter_pitch_joint" type="fixed">
-        <origin xyz="${(pitch_lx + shooter_lx) / 2} 0 0" rpy="0 0 0"/>
+    <joint name="muzzle_pitch_joint" type="fixed">
+        <origin xyz="${(pitch_lx + muzzle_lx) / 2} 0 0" rpy="0 0 0"/>
         <parent link="pitch_link"/>
-        <child link="shooter_link"/>
+        <child link="muzzle_link"/>
     </joint>
 
     <!-- Camera -->

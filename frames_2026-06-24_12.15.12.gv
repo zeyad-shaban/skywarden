@@ -1,0 +1,15 @@
+digraph G {
+"lstand_link" -> "pitch_link"[label=" Broadcaster: default_authority\nAverage rate: 18.757\nBuffer length: 2.879\nMost recent transform: 93.448\nOldest transform: 90.569\n"];
+"yaw_link" -> "lstand_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "yaw_link"[label=" Broadcaster: default_authority\nAverage rate: 18.757\nBuffer length: 2.879\nMost recent transform: 93.448\nOldest transform: 90.569\n"];
+"footprint" -> "base_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"world" -> "footprint"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"pitch_link" -> "camera_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"pitch_link" -> "muzzle_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"yaw_link" -> "rstand_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"drone" -> "body"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1782292512.48045"[ shape=plaintext ] ;
+}->"drone";
+}
