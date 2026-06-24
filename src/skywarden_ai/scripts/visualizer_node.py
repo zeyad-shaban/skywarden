@@ -33,7 +33,7 @@ class VisualizerNode(Node):
             target_cy = int((h / 2) + self.norm_err_y * h)
             draw_target_crosshair(annotated_img, target_cx, target_cy)
         
-        annotated_img = draw_sniper_scope_better(annotated_img)
+        # annotated_img = draw_sniper_scope_better(annotated_img)
         cv2.putText(annotated_img, str(int(self.avg_fps)), (7, 29), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(0, 255, 0), thickness=2)
         
         cv2.imshow("frame", annotated_img)

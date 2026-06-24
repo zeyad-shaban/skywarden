@@ -16,12 +16,16 @@ matplotlib.use("Agg")
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
-
 class DetectorNode(Node):
     def __init__(self):
         super().__init__("detector_node")
         self.get_logger().info(f"detector_node Started")
 
+        self.declare_parameter("drone_width", 0.33) # default parrot_bebop model
+        self.declare_parameter("Fx", 554.3827128) # default cacluated in gz simulation
+        self.drone_width: float = self.get_parameter("drone_width").value # type: ignore
+        self.Fx: float = self.get_parameter("Fx").value # type: ignore
+        
         static_path = os.path.join(get_package_share_directory("skywarden_ai"), "static")
         self.tracker_config_path = os.path.join(static_path, "config", "botsort_config.yaml")
         
@@ -68,6 +72,7 @@ class DetectorNode(Node):
             
             if target_box:
                 x1, y1, x2, y2 = map(int, target_box.xyxy.squeeze())
+                box_width_px = x2 - x1
                 target_cx = (x1 + x2) // 2
                 target_cy = (y1 + y2) // 2
 
@@ -78,7 +83,8 @@ class DetectorNode(Node):
                 
                 target_state_msg.norm_err_x = (target_cx - cx) / frame_width
                 target_state_msg.norm_err_y = (target_cy - cy) / frame_height
-                target_state_msg.depth_meters = -1.0
+                
+                target_state_msg.depth_meters = (self.drone_width * self.Fx) / box_width_px
                 
             else:
                 target_state_msg.is_target_visible = False
