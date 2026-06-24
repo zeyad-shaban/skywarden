@@ -54,7 +54,7 @@ private:
     void locking()
     {
         float err_x = target_state_msg->norm_err_x;
-        float err_y = target_state_msg->norm_err_y;
+        float err_y = target_state_msg->norm_err_y_with_muzzle_offset;
 
         float cmd_yaw = this->Kyaw * -err_x;
         float cmd_pitch = this->Kpitch * err_y;

@@ -221,7 +221,7 @@ def generate_launch_description():
             drone_state_publisher_node,
             rviz_node,
             controller_node,
-            # detector_node,
+            detector_node,
             # visualize_ai_node, # todo solve black screen issue here
             visualize_ballistic_arc_node,
             turret_anchor_node,

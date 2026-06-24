@@ -22,9 +22,13 @@ class DetectorNode(Node):
         self.get_logger().info(f"detector_node Started")
 
         self.declare_parameter("drone_width", 0.33) # default parrot_bebop model
+        self.declare_parameter("offset_cam_muzzle", 0.06) # default parrot_bebop model
         self.declare_parameter("Fx", 554.3827128) # default cacluated in gz simulation
+        self.declare_parameter("Fy", 554.3827128) # default cacluated in gz simulation
         self.drone_width: float = self.get_parameter("drone_width").value # type: ignore
+        self.offset_cam_muzzle: float = self.get_parameter("offset_cam_muzzle").value # type: ignore
         self.Fx: float = self.get_parameter("Fx").value # type: ignore
+        self.Fy: float = self.get_parameter("Fy").value # type: ignore
         
         static_path = os.path.join(get_package_share_directory("skywarden_ai"), "static")
         self.tracker_config_path = os.path.join(static_path, "config", "botsort_config.yaml")
@@ -81,10 +85,14 @@ class DetectorNode(Node):
                 frame_height, frame_width = frame.shape[0], frame.shape[1]
                 cy, cx = frame_height / 2, frame_width / 2
                 
+                depth = (self.drone_width * self.Fx) / box_width_px
+                cy_offset = (self.offset_cam_muzzle/depth) * self.Fy
+                
                 target_state_msg.norm_err_x = (target_cx - cx) / frame_width
                 target_state_msg.norm_err_y = (target_cy - cy) / frame_height
+                target_state_msg.norm_err_y_with_muzzle_offset = (target_cy - (cy + cy_offset)) / frame_height
                 
-                target_state_msg.depth_meters = (self.drone_width * self.Fx) / box_width_px
+                target_state_msg.depth_meters = depth
                 
             else:
                 target_state_msg.is_target_visible = False

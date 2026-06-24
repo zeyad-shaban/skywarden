@@ -16,7 +16,7 @@ class TrajectoryPredictorNode(Node):
 
         # --- Parameters ---
         self.declare_parameter("projectile_velocity", 15.0)  # Initial speed of bullet (m/s)
-        self.declare_parameter("gravity", 0) # 9.81)             # Gravity acceleration (m/s^2)
+        self.declare_parameter("gravity", 0) # Gravity acceleration (m/s^2)
         self.declare_parameter("time_step", 0.05)           # Step size for drawing points (seconds)
         self.declare_parameter("max_time", 2.0)             # How far ahead to predict (seconds)
         self.declare_parameter("world_frame", "footprint")       # Static base frame
