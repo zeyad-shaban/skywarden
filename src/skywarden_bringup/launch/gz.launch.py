@@ -152,9 +152,9 @@ def generate_launch_description():
 
     controller_node = Node(
         package="skywarden_controller",
-        executable="controller_node",
+        executable="controller_node.py",
         output="screen",
-        parameters=[{"Kyaw": 2.0, "Kpitch": 2.0}],
+        # parameters=[{"Kyaw": 2.0, "Kpitch": 2.0}],
         arguments=["-d", rviz_config_path],
     )
 
