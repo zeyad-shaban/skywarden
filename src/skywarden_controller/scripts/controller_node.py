@@ -3,11 +3,47 @@
 import rclpy
 from rclpy.node import Node
 from enum import Enum, auto
-
-# Make sure to source your workspace so this custom message is found
 from skywarden_interfaces.msg import TargetState
 from std_msgs.msg import Float64MultiArray
 import time
+
+
+class Controller:
+    def __init__(self, kp, ki, kd):
+        self.kp = kp
+        self.ki = ki
+        self.kd = kd
+
+        self.integral_cap = 2.5
+        self.integral_decay = 0.98
+        
+        self.last_compute_time = time.monotonic()
+        self.integral_sum = 0.0
+        self.last_err = 0
+
+    def compute(self, err):
+        now = time.monotonic()
+        dt = now - self.last_compute_time
+        self.last_compute_time = now
+        
+        p_out = self.kp * err
+
+        self.integral_sum = max(min((self.integral_sum * self.integral_decay) + err * dt, self.integral_cap), -self.integral_cap)
+        i_out = self.ki * self.integral_sum
+        
+        d_err = (err - self.last_err) / dt
+        d_out = self.kd * d_err
+        self.last_err = err
+
+        print(f"p_term: {p_out:.2f} i_term: {i_out:.2f}, integral_sum: {self.integral_sum:.2f} d_out: {d_out:.6f}")
+
+        return p_out + i_out + d_out
+
+    def clear(self):
+        self.integral_sum = 0
+        self.last_err = 0
+        self.last_compute_time = time.monotonic()
+
 
 class SystemState(Enum):
     IDLE = auto()
@@ -20,11 +56,8 @@ class ControllerNode(Node):
         super().__init__("controller_node")
         self.get_logger().info("controller_node started!")
 
-        self.declare_parameter("Kyaw", 2.0)
-        self.declare_parameter("Kpitch", 2.0)
-
-        self.Kyaw = self.get_parameter("Kyaw").value
-        self.Kpitch = self.get_parameter("Kpitch").value
+        self.yaw_controller =   Controller(0.7, 0.5, 0.05)
+        self.pitch_controller = Controller(0.7, 0.5, 0.05)
 
         self.target_state_sub = self.create_subscription(TargetState, "/target_state", self.target_state_callback, 10)
         self.joint_vel_publisher = self.create_publisher(Float64MultiArray, "/joint_trajectory_controller/commands", 10)
@@ -47,13 +80,13 @@ class ControllerNode(Node):
         if self.target_state_msg is None or not self.target_state_msg.is_target_visible:
             return
 
+        self.yaw_controller.clear()
+        self.pitch_controller.clear()
         self.get_logger().info("Switching to locking state")
         self.state = SystemState.LOCKING
 
     def locking(self):
-        time_diff = time.monotonic() - self.last_msg_time # seconds
-
-        if time_diff > 0.2 or self.target_state_msg is None:
+        if (time.monotonic() - self.last_msg_time) > 2.5 or (self.target_state_msg is None):
             self.get_logger().warn("Target signal lost! Returning to IDLE.")
             self.state = SystemState.IDLE
             self.target_state_msg = None
@@ -69,8 +102,8 @@ class ControllerNode(Node):
         err_y = self.target_state_msg.norm_err_y
 
         # Calculate control commands
-        cmd_yaw = self.Kyaw * -err_x
-        cmd_pitch = self.Kpitch * err_y
+        cmd_yaw = self.yaw_controller.compute(-err_x)
+        cmd_pitch = self.pitch_controller.compute(err_y)
 
         # Publish commands
         msg = Float64MultiArray()
@@ -78,6 +111,9 @@ class ControllerNode(Node):
         self.joint_vel_publisher.publish(msg)
 
     def target_state_callback(self, msg):
+        if not msg.is_target_visible:
+            return
+
         self.last_msg_time = time.monotonic()
         self.target_state_msg = msg
 
