@@ -23,10 +23,12 @@ class DetectorNode(Node):
 
         self.declare_parameter("drone_width", 0.33) # default parrot_bebop model
         self.declare_parameter("offset_cam_muzzle", 0.06) # default parrot_bebop model
+        self.declare_parameter("velocity_projectile", 900.0) # m/s
         self.declare_parameter("Fx", 554.3827128) # default cacluated in gz simulation
         self.declare_parameter("Fy", 554.3827128) # default cacluated in gz simulation
         self.drone_width: float = self.get_parameter("drone_width").value # type: ignore
         self.offset_cam_muzzle: float = self.get_parameter("offset_cam_muzzle").value # type: ignore
+        self.velocity_projectile: float = self.get_parameter("velocity_projectile").value # type: ignore
         self.Fx: float = self.get_parameter("Fx").value # type: ignore
         self.Fy: float = self.get_parameter("Fy").value # type: ignore
         
@@ -85,12 +87,30 @@ class DetectorNode(Node):
                 frame_height, frame_width = frame.shape[0], frame.shape[1]
                 cy, cx = frame_height / 2, frame_width / 2
                 
+                # Estimations:
                 depth = (self.drone_width * self.Fx) / box_width_px
-                cy_offset = (self.offset_cam_muzzle/depth) * self.Fy
+                time_to_hit: float = depth / self.velocity_projectile
                 
-                target_state_msg.norm_err_x = (target_cx - cx) / frame_width
-                target_state_msg.norm_err_y = (target_cy - cy) / frame_height
-                target_state_msg.norm_err_y_with_muzzle_offset = (target_cy - (cy + cy_offset)) / frame_height
+                # #### Accounting for erros
+                
+                # Muzzle offset
+                cy_offset = (self.offset_cam_muzzle/depth) * self.Fy
+                cy_corrected = cy + cy_offset
+                
+                # Predictive Lead
+                target_predicted_cx = target_cx
+                target_predicted_cy = target_cy
+                track = self.get_track()
+                if track is not None:
+                    Vx_drone, Vy_drone = track.mean[4].item(), track.mean[5].item()
+                    target_predicted_cx += (Vx_drone * time_to_hit)
+                    target_predicted_cy += (Vy_drone * time_to_hit)
+                
+                # #### End accounting for errors
+                
+                
+                target_state_msg.norm_err_x = (target_predicted_cx - cx) / frame_width
+                target_state_msg.norm_err_y = (target_predicted_cy - cy_corrected) / frame_height
                 
                 target_state_msg.depth_meters = depth
                 
@@ -131,7 +151,23 @@ class DetectorNode(Node):
                 self.id_lock = int(box.id.item())
                 
         return did_find_track
+        
+    def get_track(self):
+            if self.id_lock == -1:
+                return None
+            if not hasattr(self.model, 'predictor') or not self.model.predictor.trackers:
+                return None
                 
+            tracker = self.model.predictor.trackers[0] 
+            active_tracks = getattr(tracker, 'tracked_stracks', [])
+            
+            for t in active_tracks:
+                if t.track_id == self.id_lock:
+                    return t
+                    
+            return None
+            
+            
     def pick_largest_box(self, result: Results):
         if result.boxes is None:
             return

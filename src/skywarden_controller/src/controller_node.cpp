@@ -53,8 +53,20 @@ private:
 
     void locking()
     {
+        if ((this->now() - last_msg_time_).seconds() > 0.2)
+        {
+            RCLCPP_WARN(this->get_logger(), "Target signal lost! Returning to IDLE.");
+            this->state = SystemState::IDLE;
+            this->target_state_msg = nullptr;
+
+            auto msg = std_msgs::msg::Float64MultiArray();
+            msg.data = {0.0, 0.0};
+            this->joint_vel_publisher_->publish(msg);
+            return;
+        }
+        
         float err_x = target_state_msg->norm_err_x;
-        float err_y = target_state_msg->norm_err_y_with_muzzle_offset;
+        float err_y = target_state_msg->norm_err_y;
 
         float cmd_yaw = this->Kyaw * -err_x;
         float cmd_pitch = this->Kpitch * err_y;
@@ -66,6 +78,7 @@ private:
 
     void target_state_callback(const skywarden_interfaces::msg::TargetState::SharedPtr msg)
     {
+        this->last_msg_time_ = this->now();
         this->target_state_msg = msg;
     }
 
@@ -78,6 +91,7 @@ private:
 
     float Kyaw;
     float Kpitch;
+    rclcpp::Time last_msg_time_;
 };
 
 int main(int argc, char *argv[])

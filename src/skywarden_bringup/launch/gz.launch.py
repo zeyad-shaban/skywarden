@@ -145,7 +145,7 @@ def generate_launch_description():
                 '-name', 'drone', 
                 '-file', drone_sdf_path,
                 '-x', '4.18', '-y', '-0.01', '-z', '1.64',
-                '-R', '-0.01', '-P', '0.46', '-Y', '-3.06',
+                '-R', '-0.01', '-P', '0', '-Y', '1.57079632679',
             ],
             output='screen'
         )
@@ -154,7 +154,7 @@ def generate_launch_description():
         package="skywarden_controller",
         executable="controller_node",
         output="screen",
-        parameters=[{"Kyaw": 1.0, "Kpitch": 1.0}],
+        parameters=[{"Kyaw": 2.0, "Kpitch": 2.0}],
         arguments=["-d", rviz_config_path],
     )
 

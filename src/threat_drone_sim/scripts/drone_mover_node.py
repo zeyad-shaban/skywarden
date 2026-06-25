@@ -7,28 +7,35 @@ import math
 
 class DroneMoverNode(Node):
     def __init__(self):
-        super().__init__("drone_mover")
-        self.get_logger().info(f"node_name Started")
+        super().__init__("orbit_drone")
 
-        self.forward_speed = 0.5
-        self.hz = 30
+        self.declare_parameter("orbit_radius", 4.18)
+        self.declare_parameter("drone_speed", 1.0)  # your requested default
 
-        self.publisher_ = self.create_publisher(Twist, "/drone/cmd_vel", 10)
-        self.timer_ = self.create_timer(1 / self.hz, self.update_position)
-        self.time_elapsed = 0
+        self.radius = float(self.get_parameter("orbit_radius").value)  # type: ignore
+        self.speed = float(self.get_parameter("drone_speed").value)  # type: ignore
 
-    def update_position(self):
-        self.time_elapsed += 1 / self.hz
+        self.pub = self.create_publisher(Twist, "/drone/cmd_vel", 10)
+        self.timer = self.create_timer(1.0 / 50, self.step)
+
+        self.get_logger().info(f"Orbiting radius={self.radius:.3f} m | speed={self.speed:.3f} m/s")
+
+    def step(self):
+        if self.radius <= 1e-6:
+            return
 
         msg = Twist()
-        msg.linear.x = self.forward_speed
+
+        # Forward speed in the drone's body frame
+        msg.linear.x = self.speed
         msg.linear.y = 0.0
         msg.linear.z = 0.0
-        msg.angular.x = 0.0
-        msg.angular.y = 0.0
-        msg.angular.z = 0.0
 
-        self.publisher_.publish(msg)
+        # Constant angular speed for circular motion: omega = v / r
+        omega = self.speed / self.radius
+        msg.angular.z = omega
+
+        self.pub.publish(msg)
 
 
 def main(args=None):

@@ -89,7 +89,7 @@
         <parent link="base_link" />
         <child link="yaw_link" />
         <axis xyz="0 0 1" />
-        <limit lower="${-pi/2}" upper="${pi/2}" effort="30" velocity="${pi}" /> <!-- Nema 17 motor
+        <limit lower="0" upper="${pi}" effort="30" velocity="${pi}" /> <!-- Nema 17 motor
         have holding toruqe of 0.3 N*m-->
     </joint>
 

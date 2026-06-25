@@ -10,14 +10,9 @@ find_package(ament_cmake REQUIRED)
 
 install(DIRECTORY models DESTINATION share/${PROJECT_NAME})
 
-install(
-  PROGRAMS scripts/drone_mover_node.py
-  DESTINATION lib/${PROJECT_NAME}
-  RENAME drone_mover_node)
+install(PROGRAMS scripts/drone_mover_node.py DESTINATION lib/${PROJECT_NAME})
 
-install(
-  PROGRAMS scripts/camera_recorder_node.py
-  DESTINATION lib/${PROJECT_NAME}
-  RENAME camera_recorder_node)
+install(PROGRAMS scripts/camera_recorder_node.py
+        DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

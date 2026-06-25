@@ -1,5 +1,4 @@
 bool is_target_visible
 float32 norm_err_x
 float32 norm_err_y
-float32 norm_err_y_with_muzzle_offset
 float32 depth_meters

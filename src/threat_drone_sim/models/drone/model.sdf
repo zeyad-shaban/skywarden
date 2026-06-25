@@ -8,7 +8,7 @@
       name="gz::sim::systems::VelocityControl">
       <topic>/drone/cmd_vel</topic>
     </plugin>
-    
+
     <plugin filename="gz-sim-pose-publisher-system" name="gz::sim::systems::PosePublisher">
       <publish_model_pose>true</publish_model_pose>
       <use_pose_vector_msg>true</use_pose_vector_msg>
@@ -65,6 +65,7 @@
       </collision>
       <visual name="hull">
         <cast_shadows>false</cast_shadows>
+        <pose>0 0 0 0 0.46 0</pose>
         <geometry>
           <mesh>
             <uri>package://threat_drone_sim/models/drone/meshes/hull.dae</uri>
@@ -73,7 +74,7 @@
       </visual>
       <visual name="propeller_rr">
         <cast_shadows>false</cast_shadows>
-        <pose>-0.09035 -0.11423 -0.00501 0 0 0</pose>
+        <pose>-0.09035 -0.11423 -0.00501 0 0.46 0</pose>
         <geometry>
           <mesh>
             <uri>package://threat_drone_sim/models/drone/meshes/propeller_rr.dae</uri>
@@ -82,7 +83,7 @@
       </visual>
       <visual name="propeller_rl">
         <cast_shadows>false</cast_shadows>
-        <pose>-0.09035 0.11452 -0.00501 0 0 0</pose>
+        <pose>-0.09035 0.11452 -0.00501 0 0.46 0</pose>
         <geometry>
           <mesh>
             <uri>package://threat_drone_sim/models/drone/meshes/propeller_rl.dae</uri>
@@ -91,7 +92,7 @@
       </visual>
       <visual name="propeller_fr">
         <cast_shadows>false</cast_shadows>
-        <pose>0.08456 -0.11435 -0.00501 0 0 0</pose>
+        <pose>0.08456 -0.11435 -0.00501 0 0.46 0</pose>
         <geometry>
           <mesh>
             <uri>package://threat_drone_sim/models/drone/meshes/propeller_fr.dae</uri>
@@ -100,7 +101,7 @@
       </visual>
       <visual name="propeller_fl">
         <cast_shadows>false</cast_shadows>
-        <pose>0.08456 0.11463 -0.00501 0 0 0</pose>
+        <pose>0.08456 0.11463 -0.00501 0 0.46 0</pose>
         <geometry>
           <mesh>
             <uri>package://threat_drone_sim/models/drone/meshes/propeller_fl.dae</uri>
