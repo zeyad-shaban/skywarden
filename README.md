@@ -8,8 +8,6 @@
 
 [![Watch the Demo](https://img.youtube.com/vi/-JinIK--sEw/maxresdefault.jpg)](https://youtu.be/-JinIK--sEw)
 
-**▶ [Watch the full demo on YouTube](https://youtu.be/-JinIK--sEw)**
-
 ![ROS 2](https://img.shields.io/badge/ROS_2-Jazzy-blue)
 ![Gazebo](https://img.shields.io/badge/Gazebo-Harmonic-orange)
 ![OpenVINO](https://img.shields.io/badge/OpenVINO-INT8-purple)
